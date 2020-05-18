@@ -18,7 +18,6 @@ def textTest(wordMatrix):
     start = datetime.now()
 
     conn = sqlite3.connect('db.sqlite3')
-    c = conn.cursor()
 
     end = datetime.now()
     print(f'done {end - start}\n')
@@ -29,7 +28,7 @@ def textTest(wordMatrix):
     print('creating 30 column database table')
     start = datetime.now()
 
-    c.execute('''CREATE TABLE IF NOT EXISTS randomData
+    conn.execute('''CREATE TABLE IF NOT EXISTS randomData
             (
             col0 text,
             col1 text,
@@ -67,6 +66,25 @@ def textTest(wordMatrix):
     end = datetime.now()
     print(f'done {end - start}\n')
 
+    ##################
+    # Write single row 
+    ##################
+    print('writing single row to database')
+    start = datetime.now()
+
+    conn = sqlite3.connect('db.sqlite3')
+
+    insertCommand = """INSERT INTO randomData VALUES 
+        (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+    
+    conn.execute(insertCommand, wordMatrix[0])
+    conn.commit()
+    
+    conn.close()
+
+    end = datetime.now()
+    print(f'done {end - start}\n')
+ 
     #############
     # Write words 
     #############
@@ -74,14 +92,13 @@ def textTest(wordMatrix):
     start = datetime.now()
 
     conn = sqlite3.connect('db.sqlite3')
-    c = conn.cursor()
 
     insertCommand = """INSERT INTO randomData VALUES 
         (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
     
     for line in wordMatrix:
-        dataTuple = tuple(line)
-        c.execute(insertCommand, dataTuple)
+        conn.execute(insertCommand, line)
+        conn.commit()
     
     conn.close()
 
@@ -95,12 +112,13 @@ def textTest(wordMatrix):
     start = datetime.now()
 
     conn = sqlite3.connect('db.sqlite3')
-    c = conn.cursor()
+    cursor = conn.execute("SELECT * from randomData where col0 like 'a%'")
+    #cursor = conn.execute("SELECT * from randomData")
+    
+    #for row in cursor:
+    #    for entry in row:
+    #        print(entry)
 
-    retrieved = conn.execute("SELECT * from randomData")
-
-    for row in retrieved:
-        print(row[0])
     conn.close()
 
     end = datetime.now()
