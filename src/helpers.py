@@ -19,3 +19,12 @@ def printArray(arr):
     """
     for entry in arr:
         print(entry)
+
+
+def getWords():
+    words = []
+    with open('/usr/share/dict/words') as f:
+        for line in f:
+            words.append(f.readline().strip())
+    return words
+
